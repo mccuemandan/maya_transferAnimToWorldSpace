@@ -48,7 +48,7 @@ def findConstraints(object):
     # makes constraint list without unicode
     for i in uniqueConstraintsList:
         constraintsList.append(str(i))
-    print str(object) + " constraints list: " + str(constraintsList)
+    #print str(object) + " constraints list: " + str(constraintsList)
     return constraintsList
 
 def collectIncomingConnections(object):
@@ -62,7 +62,7 @@ def collectIncomingConnections(object):
                    incomingConnections.append(str(i))
     else:
         pass
-    print str(object) + " incoming connections: " + str(sorted(set(incomingConnections)))
+    #print str(object) + " incoming connections: " + str(sorted(set(incomingConnections)))
     return sorted(set(incomingConnections))                                
 
 def findConstraintInfluencers(object):
