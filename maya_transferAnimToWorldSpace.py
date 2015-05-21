@@ -1,8 +1,11 @@
 '''
 -Recreates the keyframes on an object in world space from all the connected groups and constraints
 
+-Creates a locator that has the original animation trajectory before the transfer as reference
+
 -May interpolate differently from original animation - may have to add more keyframes for a more
 accurate transfer
+
 '''
 
 import maya.cmds as cmds
@@ -219,7 +222,31 @@ def reanimateToObject(reanimatedObject,sourceAnimObject):
          cmds.delete(constraintName)
 
 
+def createOriginalAnimLocator(object):
+      # create a corresponding locator - named "loc_object_originalAnim"
+      locatorName = str("loc_" + str(object) + "_originalAnim")
+      cmds.spaceLocator( n = locatorName)
+
+      # parent constrain locator to object with offset off
+      parentConstrainName = str(locatorName + "_parentConstrain")
+      cmds.parentConstraint(  object, locatorName, mo = 0, n = parentConstrainName )
+
+      # bake locator translate and rotation animation based on first and last keyframe
+      #get Start and End Frame of Time Slider
+      keyframeArray = findEffectingKeyframes(object)
+      endIteration = len(keyframeArray) - 1
+      
+      startFrame = keyframeArray[0]
+      endFrame = keyframeArray[endIteration]
+      
+      cmds.bakeResults( locatorName, t=(startFrame, endFrame))         
+
+      # delete parent constrain on locator       
+      cmds.delete(parentConstrainName)
+
+
 def reanimateToWorldSpace(object):
+    createOriginalAnimLocator(object)
     objectLocator = "loc_" + str(object) + "_copyAnim"
     copyAnimToLocator(object)
     cmds.parent(object, w=1)
